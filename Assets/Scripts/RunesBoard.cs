@@ -29,7 +29,7 @@ public class RunesBoard : MonoBehaviour {
                     hex.transform.name = i + "," + j;
                     Vector3 pos = new Vector3(0.75f*i, 0, j*0.866f-0.433f* i);
                     hex.transform.position = pos;
-                    //hex.transform.rotation = Quaternion.EulerAngles(0, 90, 0);
+                    hex.transform.rotation = Quaternion.EulerAngles(0, 90, 0);
                 }
             }
         }
