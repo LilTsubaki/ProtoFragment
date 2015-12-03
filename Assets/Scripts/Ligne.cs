@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Plateau : MonoBehaviour {
+public class Ligne : MonoBehaviour {
 
-    public Ligne[] lignes;
+    public Hexagon[] cases;
 	// Use this for initialization
 	void Start () {
 	
@@ -13,9 +13,4 @@ public class Plateau : MonoBehaviour {
 	void Update () {
 	
 	}
-
-    public GameObject GetCase(int x, int y)
-    {
-        return lignes[y].cases[x];
-    }
 }
