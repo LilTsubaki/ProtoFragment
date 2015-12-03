@@ -7,16 +7,22 @@ public class Hexagon : MonoBehaviour , IAStar<Hexagon>
 {
     public int x, y;
     public Plateau plateau;
+    private bool isBusy;
+    public bool IsBusy { get { return isBusy; } set { isBusy = value;  if(isBusy) gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red; else gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.white; } }
 	// Use this for initialization
 	void Start () {
-	
-	}
+        IsBusy = false;
+    }
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
-
+	void Update ()
+    {
+	    /*if(isBusy)
+            gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
+        else
+            gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.white;*/
+    }
+    
     public Hexagon getNorthEast()
     {
         return plateau.GetCase(x + 1, y + 1);
@@ -54,22 +60,22 @@ public class Hexagon : MonoBehaviour , IAStar<Hexagon>
         Hexagon SW = getSouthWest();
 
 
-        if (NE != null)
+        if (NE != null && !NE.IsBusy)
             neighbours.Add(NE);
 
-        if (NW != null)
+        if (NW != null && !NW.IsBusy)
             neighbours.Add(NW);
 
-        if (E != null)
+        if (E != null && !E.IsBusy)
             neighbours.Add(E);
 
-        if (W != null)
+        if (W != null && !W.IsBusy)
             neighbours.Add(W);
 
-        if (SE != null)
+        if (SE != null && !SE.IsBusy)
             neighbours.Add(SE);
 
-        if (SW != null)
+        if (SW != null && !SW.IsBusy)
             neighbours.Add(SW);
 
         return neighbours;
@@ -89,4 +95,23 @@ public class Hexagon : MonoBehaviour , IAStar<Hexagon>
     {
         return 1;
     }
+
+    public void onPlayerEnter(Player p)
+    {
+        IsBusy = true;
+        if (p.hexagon != null)
+            p.hexagon.onPlayerExit(p);
+        p.hexagon = this;
+        gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.blue;
+
+
+
+    }
+
+    public void onPlayerExit(Player p)
+    {
+        IsBusy = false;
+        
+    }
+
 }

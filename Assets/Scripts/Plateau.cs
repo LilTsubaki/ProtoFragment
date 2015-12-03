@@ -20,12 +20,11 @@ public class Plateau : MonoBehaviour {
     {
         if( y < lignes.Length && y>=0)
         {
-            if(x<lignes[y].cases.Length&& x >= 0)
+            if(x < lignes[y].cases.Length && x >= 0)
             {
                 return lignes[y].cases[x];
             }
         }
-
         return null;
     }
 
