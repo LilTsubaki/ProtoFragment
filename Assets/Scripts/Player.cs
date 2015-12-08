@@ -8,40 +8,62 @@ public class Player : MonoBehaviour
     public bool isMoving=false;
     List<Hexagon> path;
     private int currentStep;
-
+    public bool isMyTurn=false;
 
     // Use this for initialization
-    void Start ()
+    void Awake ()
     {
-	
-	}
+        hexagon.IsBusy= true;
+        hexagon.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.blue;
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-
-        if (Input.GetMouseButtonDown(1) && !isMoving)
+        if(isMyTurn)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //Debug.DrawLine(ray.origin, ray.direction * 20);
-            RaycastHit rch;
-            //int layermask = (1 << LayerMask.NameToLayer("Default"));
-            int layermask = LayerMask.GetMask("Terrain");
-            if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
+            if (Input.GetMouseButtonDown(0) && !isMoving)
             {
-                Hexagon hexa = rch.collider.GetComponent<Hexagon>();
-                if (hexa != null && hexa != hexagon)
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit rch;
+                int layermask = LayerMask.GetMask("Players");
+                if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
                 {
-                    path = hexagon.plateau.Path(hexagon, hexa);
-                    currentStep = 0;
-                    if (path != null && path.Count > 0)
-                        isMoving = true;
-                    Move();
+                    Player player = rch.collider.GetComponent<Player>();
+                    if (player != null && player != this)
+                    {
+                        Debug.Log("pew pew");
+                        hexagon.plateau.GetComponent<TurnManager>().changeTurn();
+                    }
                 }
+            }
+            if (Input.GetMouseButtonDown(1) && !isMoving)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                //Debug.DrawLine(ray.origin, ray.direction * 20);
+                RaycastHit rch;
+                //int layermask = (1 << LayerMask.NameToLayer("Default"));
+                int layermask = LayerMask.GetMask("Terrain");
+                if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
+                {
+                    Hexagon hexa = rch.collider.GetComponent<Hexagon>();
+                    if (hexa != null && hexa != hexagon && !hexa.IsBusy)
+                    {
+                        path = hexagon.plateau.Path(hexagon, hexa);
+                        currentStep = 0;
+                        if (path != null && path.Count > 0)
+                            isMoving = true;
+                        Move();
+                    }
+                }
+            }
+            if (isMoving)
+            {
+                Move();
             }
         }
 
-        if (Input.GetMouseButtonDown(0) && !isMoving)
+        if (Input.GetMouseButtonDown(2) && !isMoving)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //Debug.DrawLine(ray.origin, ray.direction * 20);
@@ -51,16 +73,11 @@ public class Player : MonoBehaviour
             if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
             {
                 Hexagon hexa = rch.collider.GetComponent<Hexagon>();
-                if (hexa != null && hexa != hexagon)
+                if (hexa != null && hexa != hexagon && !hexa.IsBusy)
                 {
                     hexa.IsBusy = !hexa.IsBusy;
                 }
             }
-        }
-
-        if (isMoving)
-        {
-            Move();
         }
     }
 
@@ -83,6 +100,7 @@ public class Player : MonoBehaviour
                 if(currentStep == path.Count)
                 {
                     isMoving = false;
+                    hexagon.plateau.GetComponent<TurnManager>().changeTurn();
                 }
             }
         }

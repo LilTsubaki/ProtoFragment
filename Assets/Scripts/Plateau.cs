@@ -6,6 +6,9 @@ public class Plateau : MonoBehaviour {
 
     public Ligne[] lignes;
     AStar<Hexagon> astar = new AStar<Hexagon>();
+
+
+
 	// Use this for initialization
 	void Start () {
 	
@@ -15,6 +18,11 @@ public class Plateau : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    void Awake()
+    {
+
+    }
 
     public Hexagon GetCase(int x, int y)
     {

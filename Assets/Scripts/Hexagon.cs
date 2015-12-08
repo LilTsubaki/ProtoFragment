@@ -7,11 +7,11 @@ public class Hexagon : MonoBehaviour , IAStar<Hexagon>
 {
     public int x, y;
     public Plateau plateau;
-    private bool isBusy;
+    public bool isBusy;
     public bool IsBusy { get { return isBusy; } set { isBusy = value;  if(isBusy) gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red; else gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.white; } }
 	// Use this for initialization
 	void Start () {
-        IsBusy = false;
+        //IsBusy = false;
     }
 	
 	// Update is called once per frame
@@ -103,15 +103,11 @@ public class Hexagon : MonoBehaviour , IAStar<Hexagon>
             p.hexagon.onPlayerExit(p);
         p.hexagon = this;
         gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.blue;
-
-
-
     }
 
     public void onPlayerExit(Player p)
     {
-        IsBusy = false;
-        
+        IsBusy = false;      
     }
 
 }
