@@ -57,27 +57,30 @@ public class Player : MonoBehaviour
                     }
                 }
             }
+
+            if (Input.GetMouseButtonDown(2) && !isMoving)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                //Debug.DrawLine(ray.origin, ray.direction * 20);
+                RaycastHit rch;
+                //int layermask = (1 << LayerMask.NameToLayer("Default"));
+                int layermask = LayerMask.GetMask("Terrain");
+                if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
+                {
+                    Hexagon hexa = rch.collider.GetComponent<Hexagon>();
+                    if (hexa != null && hexa != hexagon && hexa != hexagon.plateau.GetComponent<TurnManager>().player2.GetComponent<Player>().hexagon
+                        && hexa != hexagon.plateau.GetComponent<TurnManager>().player1.GetComponent<Player>().hexagon)
+                    {
+                        hexa.IsBusy = !hexa.IsBusy;
+                    }
+                }
+            }
+
             if (isMoving)
             {
                 Move();
             }
-        }
-
-        if (Input.GetMouseButtonDown(2) && !isMoving)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //Debug.DrawLine(ray.origin, ray.direction * 20);
-            RaycastHit rch;
-            //int layermask = (1 << LayerMask.NameToLayer("Default"));
-            int layermask = LayerMask.GetMask("Terrain");
-            if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
-            {
-                Hexagon hexa = rch.collider.GetComponent<Hexagon>();
-                if (hexa != null && hexa != hexagon && !hexa.IsBusy)
-                {
-                    hexa.IsBusy = !hexa.IsBusy;
-                }
-            }
+            
         }
     }
 
