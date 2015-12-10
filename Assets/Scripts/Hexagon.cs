@@ -103,11 +103,14 @@ public class Hexagon : MonoBehaviour , IAStar<Hexagon>
             p.hexagon.onPlayerExit(p);
         p.hexagon = this;
         gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.blue;
+        transform.GetChild(1).gameObject.SetActive(true);
+        transform.GetChild(1).GetComponent<Renderer>().enabled = false;
     }
 
     public void onPlayerExit(Player p)
     {
-        IsBusy = false;      
+        IsBusy = false;
+        transform.GetChild(1).gameObject.SetActive(false);
     }
 
 }

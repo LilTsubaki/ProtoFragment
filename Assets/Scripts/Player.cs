@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     {
         hexagon.IsBusy= true;
         hexagon.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.blue;
+        hexagon.transform.GetChild(1).gameObject.SetActive(hexagon.IsBusy);
+        hexagon.transform.GetChild(1).GetComponent<Renderer>().enabled = false;
     }
 	
 	// Update is called once per frame
@@ -30,9 +32,10 @@ public class Player : MonoBehaviour
                 if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
                 {
                     Player player = rch.collider.GetComponent<Player>();
-                    if (player != null && player != this)
+                    if (player != null && player != this && hexagon.plateau.fieldOfView(hexagon, player.hexagon))
                     {
-                        Debug.Log("pew pew");
+                        Debug.Log("on peut pew pew");
+                        hexagon.plateau.resetAll();
                         hexagon.plateau.GetComponent<TurnManager>().changeTurn();
                     }
                 }
@@ -51,6 +54,7 @@ public class Player : MonoBehaviour
                     {
                         path = hexagon.plateau.Path(hexagon, hexa);
                         currentStep = 0;
+                        hexa.plateau.resetAll();
                         if (path != null && path.Count > 0)
                             isMoving = true;
                         Move();
@@ -72,6 +76,10 @@ public class Player : MonoBehaviour
                         && hexa != hexagon.plateau.GetComponent<TurnManager>().player1.GetComponent<Player>().hexagon)
                     {
                         hexa.IsBusy = !hexa.IsBusy;
+                        hexa.transform.GetChild(1).gameObject.SetActive(hexa.IsBusy);
+                        hexa.transform.GetChild(1).GetComponent<Renderer>().enabled = true;
+                        hexa.plateau.resetAll();
+                        fieldOfView();
                     }
                 }
             }
@@ -106,6 +114,24 @@ public class Player : MonoBehaviour
                     hexagon.plateau.GetComponent<TurnManager>().changeTurn();
                 }
             }
+        }
+    }
+
+    public void fieldOfView()
+    {
+        Plateau pl = hexagon.plateau;
+        for(int i = 0; i < pl.lignes.Length; i++)
+        {
+            for(int j = 0; j < pl.lignes[i].cases.Length; j++)
+            {
+                Hexagon dest = pl.lignes[i].cases[j];
+                if (!dest.isBusy && hexagon != dest && !pl.fieldOfView(hexagon, dest))
+                {
+                    dest.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.magenta;
+                }
+                //break;
+            }
+            //break;
         }
     }
 }

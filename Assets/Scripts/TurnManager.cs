@@ -16,7 +16,11 @@ public class TurnManager : MonoBehaviour
     {
         Player p = player1.GetComponent<Player>();
         if (p != null)
+        {
+            p.fieldOfView();
             p.isMyTurn = true;
+        }
+            
        
     }
 
@@ -42,8 +46,15 @@ public class TurnManager : MonoBehaviour
             p2.isMyTurn = !p2.isMyTurn;
 
         if (p1.isMyTurn)
+        {
             playerTurn = 1;
+            p1.fieldOfView();
+        }  
         else
+        {
             playerTurn = 2;
+            p2.fieldOfView();
+        }
+            
     }
 }
