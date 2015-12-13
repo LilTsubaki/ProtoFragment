@@ -26,4 +26,12 @@ public class Rune : MonoBehaviour {
             }
         }
 	}
+
+	public void ResetPosition() {
+		Vector3 pos = gameObject.transform.localPosition;
+		pos.x = 0;
+		pos.z = 0;
+		pos.y = 1;
+		gameObject.transform.localPosition = pos;
+	}
 }

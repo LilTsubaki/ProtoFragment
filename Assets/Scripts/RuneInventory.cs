@@ -5,22 +5,28 @@ using System.Collections.Generic;
 public class RuneInventory : MonoBehaviour {
 
     public int slotsNb = 4;
-    public List<RuneSlot> slots;
+	public GameObject slot;
     public GameObject runeTest;
 
 	// Use this for initialization
 	void Awake () {
-        slots = new List<RuneSlot>();
         for(int i = 0; i < slotsNb; ++i)
         {
-            slots.Add(new RuneSlot(gameObject.transform.position + new Vector3(0 ,0 ,-i * (1 + 0.2f)), Instantiate(runeTest)));
+			GameObject newSlot = (GameObject) Instantiate(slot, gameObject.transform.position + new Vector3(0 ,0 ,-i * (1 + 0.2f)), Quaternion.identity);
+			newSlot.transform.SetParent(gameObject.transform);
+			newSlot.layer = LayerMask.NameToLayer("caseRunier");
+			RuneSlot rs = newSlot.AddComponent<RuneSlot>();
 
+			GameObject newRune = Instantiate(runeTest);
+			newRune.transform.SetParent(rs.transform);
+			newRune.GetComponent<Rune>().ResetPosition();
+			rs.runeBase = newRune.GetComponent<Rune>();
         }
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0))
         {
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit info;
@@ -31,7 +37,7 @@ public class RuneInventory : MonoBehaviour {
                 held.GetComponent<Rune>().follow = true;
             }
         }
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(0))
         {
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit info;
@@ -42,21 +48,15 @@ public class RuneInventory : MonoBehaviour {
                 held.GetComponent<Rune>().follow = false;
                 if(Physics.Raycast(r, out info, Mathf.Infinity, LayerMask.GetMask("caseRunier")))
                 {
-                    Vector3 newPos = info.transform.position;
-                    newPos.y += 2;
-                    held.transform.position = newPos;
-                }
-                else
-                {
-                    held.transform.position = held.GetComponent<Rune>().slot.pos;
-                }
-                
+					GameObject slot = info.collider.gameObject;
+					held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
+					held.transform.SetParent(slot.transform);
+					slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
+
+				}
+				held.GetComponent<Rune>().ResetPosition();
             }
 
-            if (Physics.Raycast(r, out info, Mathf.Infinity, LayerMask.GetMask("caseRunier")))
-            {
-                Debug.Log(info.collider.gameObject.name);
-            }
         }
 
 
