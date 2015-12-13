@@ -6,14 +6,14 @@ public class RunesBoard : MonoBehaviour {
 
     public Dictionary<int, RuneSlot> dict;
     //public GameObject hexagon;
-
-	// Use this for initialization
-	void Start () {
+	
+	void Awake () {
         dict = new Dictionary<int, RuneSlot>();
 
 
 		foreach (RuneSlot rs in gameObject.transform.GetComponentsInChildren<RuneSlot> ()) {
-			int id = int.Parse(rs.gameObject.name);
+			string[] strs = rs.name.Split(',');
+			int id = int.Parse(strs[0])*4 + int.Parse(strs[1]);
 			dict.Add(id, rs);
 		}
         /*Hexagon center = new Hexagon();
@@ -40,8 +40,7 @@ public class RunesBoard : MonoBehaviour {
         }*/
 
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			foreach(int i in dict.Keys) {
