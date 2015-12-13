@@ -4,14 +4,19 @@ using System.Collections.Generic;
 
 public class RunesBoard : MonoBehaviour {
 
-    public Dictionary<int, Hexagon> dict;
-    public GameObject hexagon;
+    public Dictionary<int, RuneSlot> dict;
+    //public GameObject hexagon;
 
 	// Use this for initialization
 	void Start () {
-        dict = new Dictionary<int, Hexagon>();
+        dict = new Dictionary<int, RuneSlot>();
 
-        Hexagon center = new Hexagon();
+
+		foreach (RuneSlot rs in gameObject.transform.GetComponentsInChildren<RuneSlot> ()) {
+			int id = int.Parse(rs.gameObject.name);
+			dict.Add(id, rs);
+		}
+        /*Hexagon center = new Hexagon();
         center.x = 0;
         center.y = 0;
 	    for(int i = -2; i <= 2; ++i)
@@ -32,12 +37,16 @@ public class RunesBoard : MonoBehaviour {
                     hex.transform.rotation = Quaternion.Euler(0, 90, 0);
                 }
             }
-        }
+        }*/
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			foreach(int i in dict.Keys) {
+				Debug.Log(i + " : " + dict[i].runeBase);
+			}
+		}
 	}
 }
