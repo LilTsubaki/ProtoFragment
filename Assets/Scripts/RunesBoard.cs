@@ -5,15 +5,17 @@ using System.Collections.Generic;
 public class RunesBoard : MonoBehaviour {
 
     public Dictionary<int, RuneSlot> dict;
+	public Dictionary<RuneSlot, List<RuneSlot>> parents;
 	
 	void Awake () {
         dict = new Dictionary<int, RuneSlot>();
-
+		parents = new Dictionary<RuneSlot, List<RuneSlot>> ();
 
 		foreach (RuneSlot rs in gameObject.transform.GetComponentsInChildren<RuneSlot> ()) {
 			string[] strs = rs.name.Split(',');
 			int id = int.Parse(strs[0])*4 + int.Parse(strs[1]);
 			dict.Add(id, rs);
+			parents.Add(rs, null);
 		}
         /*Hexagon center = new Hexagon();
         center.x = 0;
@@ -63,28 +65,26 @@ public class RunesBoard : MonoBehaviour {
 				neighboors.Add(dict[i]);
 			}
 		}
-
+		if (neighboors.Count == 0) {
+			return null;
+		}
 		return neighboors;
 	}
 
-	public List<RuneSlot> GetNeighboorsWithout(int id, RuneSlot rwo) {
-		List<int> ids = new List<int> ();
-		ids.Add (id + 1);
-		ids.Add (id + 4);
-		ids.Add (id + 5);
-		ids.Add (id - 1);
-		ids.Add (id - 4);
-		ids.Add (id - 5);
-		
-		List<RuneSlot> neighboors = new List<RuneSlot> ();
-		foreach (int i in ids) {
-			if(dict.ContainsKey(i) && !dict[i].Equals(rwo) && dict[i].runeBase != null) {
-				neighboors.Add(dict[i]);
+	public List<RuneSlot> GetParentsWithout(RuneSlot slot, RuneSlot rs) {
+		if (parents [slot] == null) {
+			return null;
+		}
+		List<RuneSlot> tmpParents = new List<RuneSlot> ();
+		foreach (RuneSlot parentRs in parents[slot]) {
+			if(!parentRs.Equals(rs)) {
+				tmpParents.Add(parentRs);
 			}
 		}
-		
-		return neighboors;
+
+		return tmpParents;
 	}
+
 
 	public int CountRunes() {
 		int i = 0;
@@ -96,28 +96,54 @@ public class RunesBoard : MonoBehaviour {
 		return i;
 	}
 
+	private void RemoveRuneSlotParent(RuneSlot rs) {
+		foreach (RuneSlot r in parents.Keys) {
+			if(parents[r] != null && parents[r].Contains(rs)){
+				parents[r].Remove(rs);
+			}
+		}
+	}
+
 	public bool CanPlaceRune (GameObject after, GameObject before)
 	{
 		if (after.GetComponent<RuneSlot> () == null) {
 			Debug.LogError("Rune not placed on a proper RuneSlot");
 			return false;
 		}
-
+		Debug.Log ("--------------------------------");
 		string name = after.name;
-		string[] strs = name.Split(',');
+		string[] strsAfter = name.Split(',');
+		string[] strsBefore = before.name.Split (',');
 		RuneSlot wo = before.GetComponent<RuneSlot> ();
+		int id;
+		int orphans = -1;
 
-		if (strs.Length == 1) {
-			if (CountRunes() > 1) {
-				foreach(int i in dict.Keys){
-					if(dict[i].runeBase != null && GetNeighboorsWithout(i, wo).Count < 1){
-						return false;
+		// Slot not on board
+		if (strsAfter.Length == 1) {
+			// None of them are on the board
+			if(strsBefore.Length == 1) {
+				Debug.Log("Switch between inventory slots");
+				return true;
+			} // Before is on the board
+			else {
+				Debug.Log("Switch from board");
+				foreach(RuneSlot tmpRs in parents.Keys) {
+					List<RuneSlot> l = GetParentsWithout(tmpRs, wo);
+					if(l != null) Debug.Log (l.Count);
+					// Rune has at least a parent
+					if(l != null && l.Count == 0) {
+						orphans++;
 					}
 				}
+				if(orphans > 0) {
+					return false;
+				}
+				RemoveRuneSlotParent(wo);
+				return true;
 			}
-			return true;
 		}
-		int id = int.Parse(strs[0])*4 + int.Parse(strs[1]);
+
+		id = int.Parse(strsAfter[0])*4 + int.Parse(strsAfter[1]);
 
 		// Preventing two runes in the same slot
 		if (dict [id].runeBase != null) {
@@ -139,29 +165,25 @@ public class RunesBoard : MonoBehaviour {
 		}
 
 		// If more than one rune on the board, each slot must have at least one neighboor
-
-		if (CountRunes() > 1) {
-			foreach(int i in dict.Keys){
-				if(dict[i].runeBase != null && GetNeighboorsWithout(i, wo).Count < 1){
-					return false;
-				}
+		Debug.Log ("Parents count " + parents.Count);
+		foreach(RuneSlot tmpRs in parents.Keys) {
+			List<RuneSlot> l = GetParentsWithout(tmpRs, wo);
+			if(l != null) Debug.Log (l.Count);
+			// Rune has at least a parent
+			if(l != null && l.Count == 0) {
+				orphans++;
 			}
 		}
+		Debug.Log ("Orphans " + orphans);
+		if(orphans > 0) {
+			return false;
+		}
 
-		List<int> ids = new List<int> ();
-		ids.Add (id + 1);
-		ids.Add (id + 4);
-		ids.Add (id + 5);
-		ids.Add (id - 1);
-		ids.Add (id - 4);
-		ids.Add (id - 5);
+		bool neighboor = GetNeighboors (id).Count > 0;
 
-		bool neighboor = false;
-		foreach (int i in ids) {
-			if(dict.ContainsKey(i) && dict[i].runeBase != null) {
-				neighboor = true;
-				break;
-			}
+		if (neighboor) {
+			RemoveRuneSlotParent(wo);
+			parents[dict[id]] = GetNeighboors(id);
 		}
 
 		return neighboor;
