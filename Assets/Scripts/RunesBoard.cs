@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class RunesBoard : MonoBehaviour {
 
     public Dictionary<int, RuneSlot> dict;
-    //public GameObject hexagon;
 	
 	void Awake () {
         dict = new Dictionary<int, RuneSlot>();
@@ -49,15 +48,75 @@ public class RunesBoard : MonoBehaviour {
 		}
 	}
 
-	public bool CanPlaceRune (GameObject slot)
+	public List<RuneSlot> GetNeighboors(int id) {
+		List<int> ids = new List<int> ();
+		ids.Add (id + 1);
+		ids.Add (id + 4);
+		ids.Add (id + 5);
+		ids.Add (id - 1);
+		ids.Add (id - 4);
+		ids.Add (id - 5);
+		
+		List<RuneSlot> neighboors = new List<RuneSlot> ();
+		foreach (int i in ids) {
+			if(dict.ContainsKey(i) && dict[i].runeBase != null) {
+				neighboors.Add(dict[i]);
+			}
+		}
+
+		return neighboors;
+	}
+
+	public List<RuneSlot> GetNeighboorsWithout(int id, RuneSlot rwo) {
+		List<int> ids = new List<int> ();
+		ids.Add (id + 1);
+		ids.Add (id + 4);
+		ids.Add (id + 5);
+		ids.Add (id - 1);
+		ids.Add (id - 4);
+		ids.Add (id - 5);
+		
+		List<RuneSlot> neighboors = new List<RuneSlot> ();
+		foreach (int i in ids) {
+			if(dict.ContainsKey(i) && !dict[i].Equals(rwo) && dict[i].runeBase != null) {
+				neighboors.Add(dict[i]);
+			}
+		}
+		
+		return neighboors;
+	}
+
+	public int CountRunes() {
+		int i = 0;
+		foreach(RuneSlot rs in dict.Values) {
+			if(rs.runeBase != null)
+				i++;
+		}
+
+		return i;
+	}
+
+	public bool CanPlaceRune (GameObject after, GameObject before)
 	{
-		if (slot.GetComponent<RuneSlot> () == null) {
+		if (after.GetComponent<RuneSlot> () == null) {
 			Debug.LogError("Rune not placed on a proper RuneSlot");
 			return false;
 		}
 
-		string name = slot.name;
+		string name = after.name;
 		string[] strs = name.Split(',');
+		RuneSlot wo = before.GetComponent<RuneSlot> ();
+
+		if (strs.Length == 1) {
+			if (CountRunes() > 1) {
+				foreach(int i in dict.Keys){
+					if(dict[i].runeBase != null && GetNeighboorsWithout(i, wo).Count < 1){
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 		int id = int.Parse(strs[0])*4 + int.Parse(strs[1]);
 
 		// Preventing two runes in the same slot
@@ -79,6 +138,15 @@ public class RunesBoard : MonoBehaviour {
 				return false;
 		}
 
+		// If more than one rune on the board, each slot must have at least one neighboor
+
+		if (CountRunes() > 1) {
+			foreach(int i in dict.Keys){
+				if(dict[i].runeBase != null && GetNeighboorsWithout(i, wo).Count < 1){
+					return false;
+				}
+			}
+		}
 
 		List<int> ids = new List<int> ();
 		ids.Add (id + 1);
