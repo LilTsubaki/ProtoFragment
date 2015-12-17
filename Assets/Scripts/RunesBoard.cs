@@ -48,4 +48,54 @@ public class RunesBoard : MonoBehaviour {
 			}
 		}
 	}
+
+	public bool CanPlaceRune (GameObject slot)
+	{
+		if (slot.GetComponent<RuneSlot> () == null) {
+			Debug.LogError("Rune not placed on a proper RuneSlot");
+			return false;
+		}
+
+		string name = slot.name;
+		string[] strs = name.Split(',');
+		int id = int.Parse(strs[0])*4 + int.Parse(strs[1]);
+
+		// Preventing two runes in the same slot
+		if (dict [id].runeBase != null) {
+			return false;
+		}
+
+		bool empty = true;
+		foreach(int i in dict.Keys) {
+			if(dict[i].runeBase != null) {
+				empty = false;
+			}
+		}
+
+		if (empty) {
+			if(id == 0)
+				return true;
+			else
+				return false;
+		}
+
+
+		List<int> ids = new List<int> ();
+		ids.Add (id + 1);
+		ids.Add (id + 4);
+		ids.Add (id + 5);
+		ids.Add (id - 1);
+		ids.Add (id - 4);
+		ids.Add (id - 5);
+
+		bool neighboor = false;
+		foreach (int i in ids) {
+			if(dict.ContainsKey(i) && dict[i].runeBase != null) {
+				neighboor = true;
+				break;
+			}
+		}
+
+		return neighboor;
+	}
 }

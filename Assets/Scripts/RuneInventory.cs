@@ -49,9 +49,14 @@ public class RuneInventory : MonoBehaviour {
                 if(Physics.Raycast(r, out info, Mathf.Infinity, LayerMask.GetMask("caseRunier")))
                 {
 					GameObject slot = info.collider.gameObject;
-					held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
-					held.transform.SetParent(slot.transform);
-					slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
+					RunesBoard rb = slot.GetComponentInParent<RunesBoard>();
+					if(rb != null) {
+						if(rb.CanPlaceRune(slot)) {
+							held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
+							held.transform.SetParent(slot.transform);
+							slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
+						}
+					}
 
 				}
 				held.GetComponent<Rune>().ResetPosition();
