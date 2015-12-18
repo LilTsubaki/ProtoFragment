@@ -10,6 +10,7 @@ public class RuneInventory : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
+        
         for(int i = 0; i < slotsNb; ++i)
         {
 			GameObject newSlot = (GameObject) Instantiate(slot, gameObject.transform.position + new Vector3(0 ,0 ,-i * (1 + 0.2f)), Quaternion.identity);
@@ -22,7 +23,8 @@ public class RuneInventory : MonoBehaviour {
 			newRune.GetComponent<Rune>().ResetPosition();
 			rs.runeBase = newRune.GetComponent<Rune>();
         }
-	}
+        transform.rotation = Quaternion.Euler(-90, 0, 0);
+    }
 	
 	// Update is called once per frame
 	void Update () {

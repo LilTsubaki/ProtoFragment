@@ -18,6 +18,7 @@ public class TurnManager : MonoBehaviour
         if (p != null)
         {
             p.fieldOfView();
+            p.GetComponent<Renderer>().material.color = Color.blue;
             p.isMyTurn = true;
         }
             
@@ -49,11 +50,15 @@ public class TurnManager : MonoBehaviour
         {
             playerTurn = 1;
             p1.fieldOfView();
+            p1.GetComponent<Renderer>().material.color = Color.blue;
+            p2.GetComponent<Renderer>().material.color = Color.white;
         }  
         else
         {
             playerTurn = 2;
             p2.fieldOfView();
+            p1.GetComponent<Renderer>().material.color = Color.white;
+            p2.GetComponent<Renderer>().material.color = Color.blue;
         }
             
     }
