@@ -110,27 +110,23 @@ public class RunesBoard : MonoBehaviour {
 			Debug.LogError("Rune not placed on a proper RuneSlot");
 			return false;
 		}
-		Debug.Log ("--------------------------------");
 		string name = after.name;
 		string[] strsAfter = name.Split(',');
 		string[] strsBefore = before.name.Split (',');
 		RuneSlot wo = before.GetComponent<RuneSlot> ();
 		int id;
         int idBefore = int.MinValue;
-		int orphans = -1;
+		int orphans = 0;
 
 		// Slot not on board
 		if (strsAfter.Length == 1) {
 			// None of them are on the board
 			if(strsBefore.Length == 1) {
-				Debug.Log("Switch between inventory slots");
 				return true;
 			} // Before is on the board
 			else {
-				Debug.Log("Switch from board");
 				foreach(RuneSlot tmpRs in parents.Keys) {
 					List<RuneSlot> l = GetParentsWithout(tmpRs, wo);
-					if(l != null) Debug.Log (l.Count);
 					// Rune has at least a parent
 					if(l != null && l.Count == 0) {
 						orphans++;
@@ -139,7 +135,8 @@ public class RunesBoard : MonoBehaviour {
 				if(orphans > 0) {
 					return false;
 				}
-				RemoveRuneSlotParent(wo);
+                RemoveRuneSlotParent(wo);
+                parents[wo] = null;
 				return true;
 			}
 		}
@@ -178,7 +175,6 @@ public class RunesBoard : MonoBehaviour {
 		
 		foreach(RuneSlot tmpRs in parents.Keys) {
 			List<RuneSlot> l = GetParentsWithout(tmpRs, wo);
-			if(l != null) Debug.Log (l.Count);
 			// Rune has at least a parent
 			if(l != null && l.Count == 0) {
 				orphans++;
@@ -188,15 +184,16 @@ public class RunesBoard : MonoBehaviour {
 			return false;
 		}
 
-		bool neighboor = GetNeighboors (id).Count > 0;
+        List<RuneSlot> lneighboor = GetNeighboors(id);
+        if (lneighboor != null) {
 
-		if (neighboor) {
-			RemoveRuneSlotParent(wo);
-            if(strsBefore.Length != 1)
+            RemoveRuneSlotParent(wo);
+            if (strsBefore.Length != 1)
                 parents[wo] = null;
-			parents[dict[id]] = GetNeighboors(id);
-		}
+            parents[dict[id]] = GetNeighboors(id);
+            return true;
+        }
 
-		return neighboor;
+        return false;
 	}
 }

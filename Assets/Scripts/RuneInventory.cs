@@ -20,8 +20,10 @@ public class RuneInventory : MonoBehaviour {
 
 			GameObject newRune = Instantiate(runeTest);
 			newRune.transform.SetParent(rs.transform);
-			newRune.GetComponent<Rune>().ResetPosition();
-			rs.runeBase = newRune.GetComponent<Rune>();
+            Rune r = newRune.GetComponent<Rune>();
+			r.ResetPosition();
+            r.initialSlot = rs;
+            rs.runeBase = r;
         }
         transform.rotation = Quaternion.Euler(-90, 0, 0);
     }
@@ -57,6 +59,7 @@ public class RuneInventory : MonoBehaviour {
 						if(rb.CanPlaceRune(slot, before)) {
 							held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
 							held.transform.SetParent(slot.transform);
+                            held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
 							slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
 						}
 					}
@@ -66,13 +69,15 @@ public class RuneInventory : MonoBehaviour {
 							if(rbbefore.CanPlaceRune(slot, before)) {
 								held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
 								held.transform.SetParent(slot.transform);
-								slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
+                                held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
+                                slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
 							}
 						}
 						else{
 							held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
 							held.transform.SetParent(slot.transform);
-							slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
+                            held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
+                            slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
 						}
 					}
 
@@ -81,7 +86,30 @@ public class RuneInventory : MonoBehaviour {
             }
 
         }
+        if (Input.GetMouseButtonUp(1))
+        {
+            Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit info;
+            if (Physics.Raycast(r, out info, Mathf.Infinity, LayerMask.GetMask("runes")))
+            {
+                GameObject held;
+                held = info.collider.gameObject;
+                Rune rune = held.GetComponent<Rune>();
+                RuneSlot slot = rune.slot;
+                RunesBoard rb = slot.gameObject.GetComponentInParent<RunesBoard>();
+                if (rb != null)
+                {
+                    if (rb.CanPlaceRune(rune.initialSlot.gameObject, slot.gameObject))
+                    {
+                        slot.runeBase = null;
+                        held.transform.SetParent(rune.initialSlot.transform);
+                        rune.initialSlot.runeBase = rune;
+                        rune.slot = rune.initialSlot;
+                        rune.ResetPosition();
+                    }
+                }
+            }
 
-
+        }
     }
 }

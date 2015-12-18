@@ -5,6 +5,7 @@ public class Rune : MonoBehaviour {
 
     internal bool follow;
     internal RuneSlot slot;
+    internal RuneSlot initialSlot;
 
 	// Use this for initialization
 	void Start () {
