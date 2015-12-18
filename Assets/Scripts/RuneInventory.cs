@@ -74,10 +74,10 @@ public class RuneInventory : MonoBehaviour {
 							}
 						}
 						else{
-							held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
+							/*held.transform.GetComponentInParent<RuneSlot>().runeBase = null;
 							held.transform.SetParent(slot.transform);
                             held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
-                            slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
+                            slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();*/
 						}
 					}
 

@@ -104,7 +104,97 @@ public class RunesBoard : MonoBehaviour {
 		}
 	}
 
-	public bool CanPlaceRune (GameObject after, GameObject before)
+    public bool CanRemove(int rs)
+    {
+        if (rs == 0 && GetNeighboors(0) == null)
+            return true;
+        Rune r= dict[rs].runeBase;
+        dict[rs].runeBase = null;
+        List<int> ids = new List<int>();
+        ids.Add(rs + 1);
+        ids.Add(rs + 4);
+        ids.Add(rs + 5);
+        ids.Add(rs - 1);
+        ids.Add(rs - 4);
+        ids.Add(rs - 5);
+
+        List<int> list = new List<int>();
+        foreach (int i in ids)
+        {
+            if (dict.ContainsKey(i) && dict[i].runeBase != null)
+            {
+                list.Clear();
+                if (!PathToZero(i, ref list))
+                {
+                    dict[rs].runeBase = r;
+                    return false;
+                }
+                    
+            }
+        }
+
+        dict[rs].runeBase = r;
+        return true;
+    }
+
+    public bool PathToZero(int rs,ref List<int> list)
+    {
+        if (rs == 0&& dict[0].runeBase != null)
+            return true;
+        if(list.Contains(rs))
+            return false;
+
+        list.Add(rs);
+
+
+        List<int> ids = new List<int>();
+        ids.Add(rs + 1);
+        ids.Add(rs + 4);
+        ids.Add(rs + 5);
+        ids.Add(rs - 1);
+        ids.Add(rs - 4);
+        ids.Add(rs - 5);
+
+        foreach (int i in ids)
+        {
+            if (dict.ContainsKey(i) && dict[i].runeBase != null)
+            {
+                if (PathToZero(i, ref list))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool CanPlaceRune(int target)
+    {
+        List<int> list = new List<int>();
+        return dict[target].runeBase==null&& (target == 0||PathToZero(target, ref list));
+    }
+    public bool CanPlaceRune(int source, int target)
+    {
+        if(dict[target].runeBase!=null)
+            return false;
+
+
+        Rune r = dict[source].runeBase;
+        dict[source].runeBase = null;
+        bool cp=CanPlaceRune(target);
+        dict[source].runeBase = r;
+
+        dict[target].runeBase = r;
+        bool cr = CanRemove(source);
+        dict[target].runeBase = null;
+        return cp&&cr;
+    }
+
+    public bool CanPlaceRune(int source, RuneSlot target)
+    {
+        return CanRemove(source) && target.runeBase==null;
+    }
+
+    public bool CanPlaceRune (GameObject after, GameObject before)
 	{
 		if (after.GetComponent<RuneSlot> () == null) {
 			Debug.LogError("Rune not placed on a proper RuneSlot");
@@ -118,6 +208,28 @@ public class RunesBoard : MonoBehaviour {
         int idBefore = int.MinValue;
 		int orphans = 0;
 
+
+        if (strsBefore.Length == 1)
+        {
+            if (strsAfter.Length == 1)
+            {
+                return false;
+            }
+                // after.GetComponent<RuneSlot>().runeBase == null;
+
+            int i = int.Parse(strsAfter[0]) * 4 + int.Parse(strsAfter[1]);
+            return CanPlaceRune(i);
+        }
+        else
+        {
+            int ib = int.Parse(strsBefore[0]) * 4 + int.Parse(strsBefore[1]);
+            if (strsAfter.Length == 1)
+                return CanPlaceRune(ib, after.GetComponent<RuneSlot>());
+
+            int ia = int.Parse(strsAfter[0]) * 4 + int.Parse(strsAfter[1]);
+            return CanPlaceRune(ib, ia);
+        }
+        /*
 		// Slot not on board
 		if (strsAfter.Length == 1) {
 			// None of them are on the board
@@ -194,6 +306,6 @@ public class RunesBoard : MonoBehaviour {
             return true;
         }
 
-        return false;
+        return false;*/
 	}
 }
