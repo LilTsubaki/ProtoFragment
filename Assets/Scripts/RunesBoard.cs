@@ -116,6 +116,7 @@ public class RunesBoard : MonoBehaviour {
 		string[] strsBefore = before.name.Split (',');
 		RuneSlot wo = before.GetComponent<RuneSlot> ();
 		int id;
+        int idBefore = int.MinValue;
 		int orphans = -1;
 
 		// Slot not on board
@@ -144,9 +145,13 @@ public class RunesBoard : MonoBehaviour {
 		}
 
 		id = int.Parse(strsAfter[0])*4 + int.Parse(strsAfter[1]);
+        if(strsBefore.Length != 1)
+        {
+            idBefore = int.Parse(strsBefore[0]) * 4 + int.Parse(strsBefore[1]);
+        }
 
-		// Preventing two runes in the same slot
-		if (dict [id].runeBase != null) {
+        // Preventing two runes in the same slot
+        if (dict [id].runeBase != null) {
 			return false;
 		}
 
@@ -163,9 +168,14 @@ public class RunesBoard : MonoBehaviour {
 			else
 				return false;
 		}
+        
+        if(idBefore == 0 && CountRunes() > 1)
+        {
+            return false;
+        }
 
 		// If more than one rune on the board, each slot must have at least one neighboor
-		Debug.Log ("Parents count " + parents.Count);
+		
 		foreach(RuneSlot tmpRs in parents.Keys) {
 			List<RuneSlot> l = GetParentsWithout(tmpRs, wo);
 			if(l != null) Debug.Log (l.Count);
@@ -174,7 +184,6 @@ public class RunesBoard : MonoBehaviour {
 				orphans++;
 			}
 		}
-		Debug.Log ("Orphans " + orphans);
 		if(orphans > 0) {
 			return false;
 		}
@@ -183,6 +192,8 @@ public class RunesBoard : MonoBehaviour {
 
 		if (neighboor) {
 			RemoveRuneSlotParent(wo);
+            if(strsBefore.Length != 1)
+                parents[wo] = null;
 			parents[dict[id]] = GetNeighboors(id);
 		}
 
