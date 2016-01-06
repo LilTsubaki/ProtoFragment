@@ -11,8 +11,11 @@ public class Plateau : MonoBehaviour {
     Vector3 centreTemp = new Vector3();
     float rayonTemp = 0;
 
-	// Use this for initialization
-	void Start () {
+    private int nbRunes = 0;
+    public GameObject p;
+
+    // Use this for initialization
+    void Start () {
 	
 	}
 	
@@ -134,9 +137,32 @@ public class Plateau : MonoBehaviour {
         }
     }
 
+    public void makeSpell()
+    {
+        makeSpell(nbRunes);
+    }
+
+    public void makeSpell(int nbRune)
+    {
+        nbRunes = nbRune;
+        switch(nbRune)
+        {
+            case 1:
+                Debug.Log(p.GetComponent<Player>().hexagon.x);
+                Debug.Log(p.GetComponent<Player>().hexagon.y);
+                break;
+            case 2: break;
+            case 3: break;
+            case 4: break;
+        }
+    }
+
+
     void OnDrawGizmos()
     {
         //Gizmos.color = Color.yellow;
         //Gizmos.DrawSphere(centreTemp, rayonTemp);
     }
+
+
 }

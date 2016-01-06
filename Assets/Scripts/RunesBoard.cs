@@ -17,29 +17,6 @@ public class RunesBoard : MonoBehaviour {
 			dict.Add(id, rs);
 			parents.Add(rs, null);
 		}
-        /*Hexagon center = new Hexagon();
-        center.x = 0;
-        center.y = 0;
-	    for(int i = -2; i <= 2; ++i)
-        {
-            for(int j = -2; j <= 2; ++j)
-            {
-                Hexagon input = new Hexagon();
-                input.x = i;
-                input.y = j;
-
-                if(center.Distance(input) <= 2)
-                {
-                    dict.Add(i*4+j, input);
-                    GameObject hex = Instantiate(hexagon);
-                    hex.transform.name = i + "," + j;
-                    Vector3 pos = new Vector3(0.75f*i, 0, j*0.866f-0.433f* i);
-                    hex.transform.position = pos;
-                    hex.transform.rotation = Quaternion.Euler(0, 90, 0);
-                }
-            }
-        }*/
-
 	}
 
 	void Update () {
@@ -177,7 +154,6 @@ public class RunesBoard : MonoBehaviour {
         if(dict[target].runeBase!=null)
             return false;
 
-
         Rune r = dict[source].runeBase;
         dict[source].runeBase = null;
         bool cp=CanPlaceRune(target);
@@ -204,10 +180,6 @@ public class RunesBoard : MonoBehaviour {
 		string[] strsAfter = name.Split(',');
 		string[] strsBefore = before.name.Split (',');
 		RuneSlot wo = before.GetComponent<RuneSlot> ();
-		int id;
-        int idBefore = int.MinValue;
-		int orphans = 0;
-
 
         if (strsBefore.Length == 1)
         {
@@ -229,83 +201,21 @@ public class RunesBoard : MonoBehaviour {
             int ia = int.Parse(strsAfter[0]) * 4 + int.Parse(strsAfter[1]);
             return CanPlaceRune(ib, ia);
         }
-        /*
-		// Slot not on board
-		if (strsAfter.Length == 1) {
-			// None of them are on the board
-			if(strsBefore.Length == 1) {
-				return true;
-			} // Before is on the board
-			else {
-				foreach(RuneSlot tmpRs in parents.Keys) {
-					List<RuneSlot> l = GetParentsWithout(tmpRs, wo);
-					// Rune has at least a parent
-					if(l != null && l.Count == 0) {
-						orphans++;
-					}
-				}
-				if(orphans > 0) {
-					return false;
-				}
-                RemoveRuneSlotParent(wo);
-                parents[wo] = null;
-				return true;
-			}
-		}
+    }
 
-		id = int.Parse(strsAfter[0])*4 + int.Parse(strsAfter[1]);
-        if(strsBefore.Length != 1)
+    public void resetBoard()
+    {
+        foreach (RuneSlot rs in dict.Values)
         {
-            idBefore = int.Parse(strsBefore[0]) * 4 + int.Parse(strsBefore[1]);
+            Rune rune = rs.runeBase;
+            if(rune != null)
+            {
+                rs.runeBase = null;
+                rune.transform.SetParent(rune.initialSlot.transform);
+                rune.initialSlot.runeBase = rune;
+                rune.slot = rune.initialSlot;
+                rune.ResetPosition();
+            }
         }
-
-        // Preventing two runes in the same slot
-        if (dict [id].runeBase != null) {
-			return false;
-		}
-
-		bool empty = true;
-		foreach(int i in dict.Keys) {
-			if(dict[i].runeBase != null) {
-				empty = false;
-			}
-		}
-
-		if (empty) {
-			if(id == 0)
-				return true;
-			else
-				return false;
-		}
-        
-        if(idBefore == 0 && CountRunes() > 1)
-        {
-            return false;
-        }
-
-		// If more than one rune on the board, each slot must have at least one neighboor
-		
-		foreach(RuneSlot tmpRs in parents.Keys) {
-			List<RuneSlot> l = GetParentsWithout(tmpRs, wo);
-			// Rune has at least a parent
-			if(l != null && l.Count == 0) {
-				orphans++;
-			}
-		}
-		if(orphans > 0) {
-			return false;
-		}
-
-        List<RuneSlot> lneighboor = GetNeighboors(id);
-        if (lneighboor != null) {
-
-            RemoveRuneSlotParent(wo);
-            if (strsBefore.Length != 1)
-                parents[wo] = null;
-            parents[dict[id]] = GetNeighboors(id);
-            return true;
-        }
-
-        return false;*/
-	}
+    }
 }

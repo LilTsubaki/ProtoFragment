@@ -7,6 +7,7 @@ public class RuneInventory : MonoBehaviour {
     public int slotsNb = 4;
 	public GameObject slot;
     public GameObject runeTest;
+    public GameObject plateau;
 
 	// Use this for initialization
 	void Awake () {
@@ -61,7 +62,11 @@ public class RuneInventory : MonoBehaviour {
 							held.transform.SetParent(slot.transform);
                             held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
 							slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
-						}
+
+                            Debug.Log(rb.CountRunes());
+                            plateau.GetComponent<Plateau>().makeSpell(rb.CountRunes());
+
+                        }
 					}
 					else {
 						RunesBoard rbbefore = before.GetComponentInParent<RunesBoard>();
@@ -71,7 +76,10 @@ public class RuneInventory : MonoBehaviour {
 								held.transform.SetParent(slot.transform);
                                 held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
                                 slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
-							}
+
+                                Debug.Log(rbbefore.CountRunes());
+                                plateau.GetComponent<Plateau>().makeSpell(rb.CountRunes());
+                            }
 						}
 						else{
 							/*held.transform.GetComponentInParent<RuneSlot>().runeBase = null;

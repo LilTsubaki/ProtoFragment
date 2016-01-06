@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
     {
         if(isMyTurn)
         {
-            if (Input.GetMouseButtonDown(0) && !isMoving)
+            /*if (Input.GetMouseButtonDown(0) && !isMoving)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit rch;
@@ -36,10 +36,10 @@ public class Player : MonoBehaviour
                     {
                         Debug.Log("on peut pew pew");
                         hexagon.plateau.resetAll();
-                        hexagon.plateau.GetComponent<TurnManager>().changeTurn();
+                        //hexagon.plateau.GetComponent<TurnManager>().changeTurn();
                     }
                 }
-            }
+            }*/
             if (Input.GetMouseButtonDown(1) && !isMoving)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -111,7 +111,8 @@ public class Player : MonoBehaviour
                 if(currentStep == path.Count)
                 {
                     isMoving = false;
-                    hexagon.plateau.GetComponent<TurnManager>().changeTurn();
+                    //hexagon.plateau.GetComponent<TurnManager>().changeTurn();
+                    fieldOfView();
                 }
             }
         }
@@ -120,6 +121,7 @@ public class Player : MonoBehaviour
     public void fieldOfView()
     {
         Plateau pl = hexagon.plateau;
+        pl.makeSpell();
         for(int i = 0; i < pl.lignes.Length; i++)
         {
             for(int j = 0; j < pl.lignes[i].cases.Length; j++)
@@ -127,7 +129,7 @@ public class Player : MonoBehaviour
                 Hexagon dest = pl.lignes[i].cases[j];
                 if (!dest.isBusy && hexagon != dest && !pl.fieldOfView(hexagon, dest))
                 {
-                    dest.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.magenta;
+                    dest.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.grey;
                 }
                 //break;
             }
