@@ -133,6 +133,7 @@ public class Plateau : MonoBehaviour {
                 if(!lignes[i].cases[j].isBusy)
                 {
                     lignes[i].cases[j].transform.GetChild(0).GetComponent<Renderer>().material.color = Color.white;
+                    lignes[i].cases[j].previous = Color.white;
                     lignes[i].cases[j].spellable = false;
                 }
             }
@@ -288,6 +289,7 @@ public class Plateau : MonoBehaviour {
         foreach (Hexagon hexa in spell)
         {
             hexa.transform.GetChild(0).GetComponent<Renderer>().material.color = hexa.previous;
+            hexa.spellable = false;
         }
     }
 
