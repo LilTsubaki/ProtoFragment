@@ -63,7 +63,7 @@ public class RuneInventory : MonoBehaviour {
                             held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
 							slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
 
-                            Debug.Log(rb.CountRunes());
+                            //Debug.Log(rb.CountRunes());
                             plateau.GetComponent<Plateau>().makeSpell(rb.CountRunes());
 
                         }
@@ -77,7 +77,7 @@ public class RuneInventory : MonoBehaviour {
                                 held.GetComponent<Rune>().slot = slot.GetComponent<RuneSlot>();
                                 slot.GetComponent<RuneSlot>().runeBase = held.GetComponent<Rune>();
 
-                                Debug.Log(rbbefore.CountRunes());
+                                //Debug.Log(rbbefore.CountRunes());
                                 plateau.GetComponent<Plateau>().makeSpell(rb.CountRunes());
                             }
 						}

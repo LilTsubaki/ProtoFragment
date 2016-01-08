@@ -13,6 +13,7 @@ public class Plateau : MonoBehaviour {
 
     private int nbRunes = 0;
     public GameObject p;
+    private Color lightGreen = new Color(0.564706f, 0.933333f, 0.564706f, 1);
 
     // Use this for initialization
     void Start () {
@@ -132,6 +133,7 @@ public class Plateau : MonoBehaviour {
                 if(!lignes[i].cases[j].isBusy)
                 {
                     lignes[i].cases[j].transform.GetChild(0).GetComponent<Renderer>().material.color = Color.white;
+                    lignes[i].cases[j].spellable = false;
                 }
             }
         }
@@ -144,25 +146,149 @@ public class Plateau : MonoBehaviour {
 
     public void makeSpell(int nbRune)
     {
+        Color lightGrey= new Color(0.8f,0.8f,0.8f,1);
         nbRunes = nbRune;
-        switch(nbRune)
+        if(nbRune > 0)
         {
-            case 1:
-                Debug.Log(p.GetComponent<Player>().hexagon.x);
-                Debug.Log(p.GetComponent<Player>().hexagon.y);
+            List<Hexagon> neighbours = p.GetComponent<Player>().hexagon.GetNeighbours();
+            foreach (Hexagon hexa in neighbours)
+            {
+                hexa.transform.GetChild(0).GetComponent<Renderer>().material.color = lightGrey;
+                hexa.previous = lightGrey;
+                hexa.spellable = true;
+            }
+        }   
+    }
+
+    public void drawSpell(Hexagon firstHexa)
+    {
+        spell(firstHexa, nbRunes);
+    }
+
+    public void resetSpell(Hexagon firstHexa)
+    {
+        resetHexaSpell(firstHexa, nbRunes);
+    }
+
+    public List<Hexagon> getSpellHexa(Hexagon firstHexa, int spellNumber)
+    {
+        Hexagon.Direction dir = firstHexa.getDirection(p.GetComponent<Player>().hexagon, firstHexa);
+
+        List<Hexagon> spell = new List<Hexagon>();
+        switch (spellNumber)
+        {
+            case 1 :
+
+                Hexagon devant = firstHexa.getHexa(dir);
+                Hexagon droite = firstHexa.getHexa(firstHexa.getRight(dir));
+                Hexagon gauche = firstHexa.getHexa(firstHexa.getLeft(dir));
+
+
+                if (devant != null && !devant.IsBusy)
+                {
+                    spell.Add(devant);
+                    Hexagon devant2 = firstHexa.getHexa(dir).getHexa(dir);
+                    if (devant2 != null && !devant2.IsBusy)
+                    {
+                        spell.Add(devant2);
+                    }
+                }
+
+                if (droite != null && !droite.IsBusy)
+                    spell.Add(droite);
+                if (gauche != null && !gauche.IsBusy)
+                    spell.Add(gauche);
+
                 break;
-            case 2: break;
-            case 3: break;
-            case 4: break;
+
+            case 2:
+                Hexagon droite2 = firstHexa.getHexa(firstHexa.getRight(dir));
+                Hexagon gauche2 = firstHexa.getHexa(firstHexa.getLeft(dir));
+
+                if (droite2 != null && !droite2.IsBusy)
+                    spell.Add(droite2);
+                if (gauche2 != null && !gauche2.IsBusy)
+                    spell.Add(gauche2);
+                break;
+
+            case 3:
+
+                Hexagon front = firstHexa.getHexa(dir);
+                if (front != null && !front.IsBusy)
+                {
+                    spell.Add(front);
+                    Hexagon front2 = front.getHexa(dir);
+                    if (front2 != null && !front2.IsBusy)
+                    {
+                        spell.Add(front2);
+
+
+                        Hexagon droite3 = front2.getHexa(front2.getRight(dir));
+                        Hexagon gauche3 = front2.getHexa(front2.getLeft(dir));
+
+                        if (droite3 != null && !droite3.IsBusy)
+                            spell.Add(droite3);
+                        if (gauche3 != null && !gauche3.IsBusy)
+                            spell.Add(gauche3);
+
+
+                        Hexagon front3 = front2.getHexa(dir);
+                        if (front3 != null && !front3.IsBusy)
+                        {
+                            spell.Add(front3);
+                        }
+                    }
+                }
+                break;
+
+            case 4:
+
+                Hexagon front1 = firstHexa.getHexa(dir);
+                if (front1 != null && !front1.IsBusy)
+                {
+                    spell.Add(front1);
+                    Hexagon front2 = front1.getHexa(dir);
+                    if (front2 != null && !front2.IsBusy)
+                    {
+                        spell.Add(front2);
+
+                        Hexagon front3 = front2.getHexa(dir);
+                        if (front3 != null && !front3.IsBusy)
+                        {
+                            spell.Add(front3);
+                            Hexagon front4 = front3.getHexa(dir);
+                            if (front4 != null && !front4.IsBusy)
+                            {
+                                spell.Add(front4);
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+        return spell;
+    }
+
+
+    public void spell(Hexagon firstHexa, int spellNumber)
+    {
+        List<Hexagon> spell = getSpellHexa(firstHexa, spellNumber);
+        spell.Add(firstHexa);
+
+        foreach (Hexagon hexa in spell)
+        {
+            hexa.transform.GetChild(0).GetComponent<Renderer>().material.color = lightGreen;
         }
     }
 
-
-    void OnDrawGizmos()
+    public void resetHexaSpell(Hexagon firstHexa, int spellNumber)
     {
-        //Gizmos.color = Color.yellow;
-        //Gizmos.DrawSphere(centreTemp, rayonTemp);
-    }
+        List<Hexagon> spell = getSpellHexa(firstHexa, spellNumber);
 
+        foreach (Hexagon hexa in spell)
+        {
+            hexa.transform.GetChild(0).GetComponent<Renderer>().material.color = hexa.previous;
+        }
+    }
 
 }

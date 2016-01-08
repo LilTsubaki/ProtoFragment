@@ -31,12 +31,10 @@ public class Player : MonoBehaviour
                 int layermask = LayerMask.GetMask("Players");
                 if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
                 {
-                    Player player = rch.collider.GetComponent<Player>();
-                    if (player != null && player != this && hexagon.plateau.fieldOfView(hexagon, player.hexagon))
+                    Hexagon hexa = rch.collider.GetComponent<Hexagon>();
+                    if (hexa != null && hexa != hexagon && !hexa.IsBusy && hexa.spellable)
                     {
-                        Debug.Log("on peut pew pew");
-                        hexagon.plateau.resetAll();
-                        //hexagon.plateau.GetComponent<TurnManager>().changeTurn();
+                        Debug.Log("pewpewpew");
                     }
                 }
             }*/
@@ -120,6 +118,7 @@ public class Player : MonoBehaviour
 
     public void fieldOfView()
     {
+        Color darkGrey = new Color(0.3f, 0.3f, 0.3f, 1);
         Plateau pl = hexagon.plateau;
         pl.makeSpell();
         for(int i = 0; i < pl.lignes.Length; i++)
@@ -129,7 +128,7 @@ public class Player : MonoBehaviour
                 Hexagon dest = pl.lignes[i].cases[j];
                 if (!dest.isBusy && hexagon != dest && !pl.fieldOfView(hexagon, dest))
                 {
-                    dest.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.grey;
+                    dest.transform.GetChild(0).GetComponent<Renderer>().material.color = darkGrey;
                 }
                 //break;
             }
