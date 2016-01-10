@@ -32,6 +32,12 @@ public class Rune : MonoBehaviour {
 		Vector3 pos = gameObject.transform.localPosition;
 		pos.x = 0;
 		pos.z = 0;
+		pos.y = 0.5f;
+		gameObject.transform.localPosition = pos;
+	}
+
+	public void HoverPosition() {
+		Vector3 pos = gameObject.transform.localPosition;
 		pos.y = 1;
 		gameObject.transform.localPosition = pos;
 	}

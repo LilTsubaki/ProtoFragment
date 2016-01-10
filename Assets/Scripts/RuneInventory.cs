@@ -40,6 +40,7 @@ public class RuneInventory : MonoBehaviour {
                 GameObject held;
                 held = info.collider.gameObject;
                 held.GetComponent<Rune>().follow = true;
+				held.GetComponent<Rune> ().HoverPosition ();
             }
         }
         if (Input.GetMouseButtonUp(0))
