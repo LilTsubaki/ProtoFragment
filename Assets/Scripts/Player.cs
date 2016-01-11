@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     List<Hexagon> path;
     private int currentStep;
     public bool isMyTurn=false;
+    public GameObject plateau;
 
     // Use this for initialization
     void Awake ()
@@ -35,7 +36,16 @@ public class Player : MonoBehaviour
                     Hexagon hexa = rch.collider.GetComponent<Hexagon>();
                     if (hexa != null && hexa != hexagon && !hexa.IsBusy && hexa.spellable)
                     {
-                        Debug.Log("pewpewpew");
+                        List<Hexagon> spell = plateau.GetComponent<Plateau>().currentSpell;
+                        if(spell !=null)
+                        {
+                            foreach(Hexagon h in spell)
+                            {
+                                if((h == hexagon.plateau.GetComponent<TurnManager>().player1.GetComponent<Player>().hexagon && hexagon.plateau.GetComponent<TurnManager>().player1 != this) ||
+                                   ( h == hexagon.plateau.GetComponent<TurnManager>().player2.GetComponent<Player>().hexagon && hexagon.plateau.GetComponent<TurnManager>().player2 != this))
+                                Debug.Log("pewpewpew sur un ennemi");
+                            }
+                        }
                     }
                 }
             }

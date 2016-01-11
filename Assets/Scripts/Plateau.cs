@@ -11,9 +11,10 @@ public class Plateau : MonoBehaviour
     Vector3 centreTemp = new Vector3();
     float rayonTemp = 0;
 
-    private int nbRunes = 0;
+    public int nbRunes = 0;
     public GameObject p;
     private Color lightGreen = new Color(0.564706f, 0.933333f, 0.564706f, 1);
+    public List<Hexagon> currentSpell;
 
     // Use this for initialization
     void Start () {
@@ -285,11 +286,11 @@ public class Plateau : MonoBehaviour
     {
         List<Hexagon> spell = getSpellHexa(firstHexa, spellNumber);
         spell.Add(firstHexa);
-
         foreach (Hexagon hexa in spell)
         {
             hexa.transform.GetChild(0).GetComponent<Renderer>().material.color = lightGreen;
         }
+        currentSpell = spell;
     }
 
     public void resetHexaSpell(Hexagon firstHexa, int spellNumber)
@@ -301,6 +302,7 @@ public class Plateau : MonoBehaviour
             hexa.transform.GetChild(0).GetComponent<Renderer>().material.color = hexa.previous;
             hexa.spellable = false;
         }
+        currentSpell = null;
     }
 
 }

@@ -115,6 +115,7 @@ public class RuneInventory : MonoBehaviour {
                         rune.initialSlot.runeBase = rune;
                         rune.slot = rune.initialSlot;
                         rune.ResetPosition();
+                        plateau.GetComponent<Plateau>().makeSpell(rb.CountRunes());
                     }
                 }
             }
