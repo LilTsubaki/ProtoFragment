@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Plateau : MonoBehaviour {
-
+public class Plateau : MonoBehaviour
+{
     [Range(0,1)]
     public float percent;
     public Ligne[] lignes;
@@ -173,6 +173,17 @@ public class Plateau : MonoBehaviour {
 
     public List<Hexagon> getSpellHexa(Hexagon firstHexa, int spellNumber)
     {
+
+        Player p1 = GetComponent<TurnManager>().player1.GetComponent<Player>();
+        Player p2 = GetComponent<TurnManager>().player2.GetComponent<Player>();
+
+        Player test;
+        if (p1.isMyTurn)
+            test = p2;
+        else
+            test = p1;
+        
+
         Hexagon.Direction dir = firstHexa.getDirection(p.GetComponent<Player>().hexagon, firstHexa);
 
         List<Hexagon> spell = new List<Hexagon>();
@@ -184,20 +195,19 @@ public class Plateau : MonoBehaviour {
                 Hexagon droite = firstHexa.getHexa(firstHexa.getRight(dir));
                 Hexagon gauche = firstHexa.getHexa(firstHexa.getLeft(dir));
 
-
-                if (devant != null && !devant.IsBusy)
+                if (devant != null && (!devant.IsBusy || devant == test.hexagon))
                 {
                     spell.Add(devant);
                     Hexagon devant2 = firstHexa.getHexa(dir).getHexa(dir);
-                    if (devant2 != null && !devant2.IsBusy)
+                    if (devant2 != null && (!devant2.IsBusy || devant2 == test.hexagon))
                     {
                         spell.Add(devant2);
                     }
                 }
 
-                if (droite != null && !droite.IsBusy)
+                if (droite != null && (!droite.IsBusy || droite == test.hexagon))
                     spell.Add(droite);
-                if (gauche != null && !gauche.IsBusy)
+                if (gauche != null && (!gauche.IsBusy || gauche == test.hexagon))
                     spell.Add(gauche);
 
                 break;
@@ -206,20 +216,20 @@ public class Plateau : MonoBehaviour {
                 Hexagon droite2 = firstHexa.getHexa(firstHexa.getRight(dir));
                 Hexagon gauche2 = firstHexa.getHexa(firstHexa.getLeft(dir));
 
-                if (droite2 != null && !droite2.IsBusy)
+                if (droite2 != null && (!droite2.IsBusy || droite2 == test.hexagon))
                     spell.Add(droite2);
-                if (gauche2 != null && !gauche2.IsBusy)
+                if (gauche2 != null && (!gauche2.IsBusy || gauche2 == test.hexagon))
                     spell.Add(gauche2);
                 break;
 
             case 3:
 
                 Hexagon front = firstHexa.getHexa(dir);
-                if (front != null && !front.IsBusy)
+                if (front != null && (!front.IsBusy || front == test.hexagon))
                 {
                     spell.Add(front);
                     Hexagon front2 = front.getHexa(dir);
-                    if (front2 != null && !front2.IsBusy)
+                    if (front2 != null && (!front2.IsBusy || front2 == test.hexagon))
                     {
                         spell.Add(front2);
 
@@ -227,14 +237,14 @@ public class Plateau : MonoBehaviour {
                         Hexagon droite3 = front2.getHexa(front2.getRight(dir));
                         Hexagon gauche3 = front2.getHexa(front2.getLeft(dir));
 
-                        if (droite3 != null && !droite3.IsBusy)
+                        if (droite3 != null && (!droite3.IsBusy || droite3 == test.hexagon))
                             spell.Add(droite3);
-                        if (gauche3 != null && !gauche3.IsBusy)
+                        if (gauche3 != null && (!gauche3.IsBusy || gauche3 == test.hexagon))
                             spell.Add(gauche3);
 
 
                         Hexagon front3 = front2.getHexa(dir);
-                        if (front3 != null && !front3.IsBusy)
+                        if (front3 != null && (!front3.IsBusy || front3 == test.hexagon))
                         {
                             spell.Add(front3);
                         }
@@ -245,20 +255,20 @@ public class Plateau : MonoBehaviour {
             case 4:
 
                 Hexagon front1 = firstHexa.getHexa(dir);
-                if (front1 != null && !front1.IsBusy)
+                if (front1 != null && (!front1.IsBusy || front1 == test.hexagon))
                 {
                     spell.Add(front1);
                     Hexagon front2 = front1.getHexa(dir);
-                    if (front2 != null && !front2.IsBusy)
+                    if (front2 != null && (!front2.IsBusy || front2 == test.hexagon))
                     {
                         spell.Add(front2);
 
                         Hexagon front3 = front2.getHexa(dir);
-                        if (front3 != null && !front3.IsBusy)
+                        if (front3 != null && (!front3.IsBusy || front3 == test.hexagon))
                         {
                             spell.Add(front3);
                             Hexagon front4 = front3.getHexa(dir);
-                            if (front4 != null && !front4.IsBusy)
+                            if (front4 != null && (!front4.IsBusy || front4 == test.hexagon))
                             {
                                 spell.Add(front4);
                             }

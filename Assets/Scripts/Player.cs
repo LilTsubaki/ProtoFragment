@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     {
         hexagon.IsBusy= true;
         hexagon.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.blue;
+        hexagon.previous = hexagon.transform.GetChild(0).GetComponent<Renderer>().material.color;
         hexagon.transform.GetChild(1).gameObject.SetActive(hexagon.IsBusy);
         hexagon.transform.GetChild(1).GetComponent<Renderer>().enabled = false;
     }
@@ -24,11 +25,11 @@ public class Player : MonoBehaviour
     {
         if(isMyTurn)
         {
-            /*if (Input.GetMouseButtonDown(0) && !isMoving)
+            if (Input.GetMouseButtonDown(0) && !isMoving)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit rch;
-                int layermask = LayerMask.GetMask("Players");
+                int layermask = LayerMask.GetMask("Terrain");
                 if (Physics.Raycast(ray, out rch, Mathf.Infinity, layermask))
                 {
                     Hexagon hexa = rch.collider.GetComponent<Hexagon>();
@@ -37,7 +38,7 @@ public class Player : MonoBehaviour
                         Debug.Log("pewpewpew");
                     }
                 }
-            }*/
+            }
             if (Input.GetMouseButtonDown(1) && !isMoving)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
