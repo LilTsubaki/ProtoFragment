@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     {
         hexagon.IsBusy= true;
         hexagon.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.blue;
-        hexagon.previous = hexagon.transform.GetChild(0).GetComponent<Renderer>().material.color;
+        hexagon.previous = Color.blue;
         hexagon.transform.GetChild(1).gameObject.SetActive(hexagon.IsBusy);
         hexagon.transform.GetChild(1).GetComponent<Renderer>().enabled = false;
     }
@@ -39,11 +39,26 @@ public class Player : MonoBehaviour
                         List<Hexagon> spell = plateau.GetComponent<Plateau>().currentSpell;
                         if(spell !=null)
                         {
-                            foreach(Hexagon h in spell)
+                            /*foreach(Hexagon h in spell)
                             {
                                 if((h == hexagon.plateau.GetComponent<TurnManager>().player1.GetComponent<Player>().hexagon && hexagon.plateau.GetComponent<TurnManager>().player1 != this) ||
                                    ( h == hexagon.plateau.GetComponent<TurnManager>().player2.GetComponent<Player>().hexagon && hexagon.plateau.GetComponent<TurnManager>().player2 != this))
                                 Debug.Log("pewpewpew sur un ennemi");
+                            }*/
+                            if(plateau.GetComponent<Plateau>().nbRunes == 1)
+                            {
+                                foreach (Hexagon h in spell)
+                                {
+                                    if(!h.IsBusy)
+                                    {
+                                        h.IsBusy = !h.IsBusy;
+                                        h.transform.GetChild(1).gameObject.SetActive(h.IsBusy);
+                                        h.transform.GetChild(1).GetComponent<Renderer>().enabled = true;
+                                    }
+                                                                        
+                                }
+                                hexa.plateau.resetAll();
+                                fieldOfView();
                             }
                         }
                     }

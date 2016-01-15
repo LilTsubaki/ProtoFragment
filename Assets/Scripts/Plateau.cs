@@ -152,6 +152,10 @@ public class Plateau : MonoBehaviour
         nbRunes = nbRune;
         if(nbRune > 0)
         {
+            p.GetComponent<Player>().hexagon.transform.GetChild(0).GetComponent<Renderer>().material.color = lightGrey;
+            p.GetComponent<Player>().hexagon.previous = lightGrey;
+            p.GetComponent<Player>().hexagon.spellable = true;
+
             List<Hexagon> neighbours = p.GetComponent<Player>().hexagon.GetNeighbours();
             foreach (Hexagon hexa in neighbours)
             {
@@ -164,13 +168,30 @@ public class Plateau : MonoBehaviour
 
     public void drawSpell(Hexagon firstHexa)
     {
-        spell(firstHexa, nbRunes);
+        /*Player p1 = GetComponent<TurnManager>().player1.GetComponent<Player>();
+        Player p2 = GetComponent<TurnManager>().player2.GetComponent<Player>();
+
+        Player test;
+        if (p1.isMyTurn)
+            test = p2;
+        else
+            test = p1;
+
+        if (firstHexa == p1.hexagon || firstHexa == p2.hexagon)
+        {
+            Debug.Log("mouse over sur moi aeuaeuaueaueaueaue");
+        }
+        else
+        {*/
+            spell(firstHexa, nbRunes);
+        //}       
     }
 
     public void resetSpell(Hexagon firstHexa)
     {
         resetHexaSpell(firstHexa, nbRunes);
     }
+
 
     public List<Hexagon> getSpellHexa(Hexagon firstHexa, int spellNumber)
     {
